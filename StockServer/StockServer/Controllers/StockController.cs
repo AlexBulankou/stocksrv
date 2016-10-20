@@ -23,6 +23,11 @@ namespace StockServer.Controllers
         [EnableCors("*","*","*")]
         public object Quote(string id)
         {
+            if (new Random().NextDouble() > 0.7)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadGateway);
+            }
+
             using (var response = WebRequest.CreateHttp("https://finance.google.com/finance/info?client=ig&q=" + id).GetResponse())
             {
                 using (var stream = response.GetResponseStream())

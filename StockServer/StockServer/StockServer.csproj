@@ -221,6 +221,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="talk0_demo\page_details.html" />
+    <Content Include="talk0_demo\page_main.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -235,12 +237,18 @@
     <Folder Include="Models\" />
     <Folder Include="Providers\" />
     <Folder Include="Results\" />
+    <Folder Include="talk0_demo\0\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\stocksrv.pubxml" />
+    <Content Include="talk0_demo\LICENSE" />
+    <Content Include="talk0_demo\README.md" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
