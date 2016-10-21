@@ -1,43 +1,55 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Web.Helpers;
-using System.Web.Http;
-using System.Web.Http.Cors;
-
-namespace StockServer.Controllers
+﻿namespace StockServer.Controllers
 {
+    using Microsoft.ApplicationInsights;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Text;
+    using System.Web.Helpers;
+    using System.Web.Http;
+    using System.Web.Http.Cors;
+
+
     [Authorize]
     public class StockController : ApiController
     {
-       
-        // GET api/values/5
+
         [Authorize]
         [AllowAnonymous]
         [HttpGet]
-        [EnableCors("*","*","*")]
+        [EnableCors("*", "*", "*")]
         public object Quote(string id)
         {
+            var telemetryClient = new TelemetryClient();
+            string url = "https://finance.google.com/finance/info?client=ig&q=" + id;
             if (new Random().NextDouble() > 0.7)
             {
-                throw new HttpResponseException(HttpStatusCode.BadGateway);
+                url = "https://finance.google.com/finance/info?client=ig&c=" + id;
             }
 
-            using (var response = WebRequest.CreateHttp("https://finance.google.com/finance/info?client=ig&q=" + id).GetResponse())
+            try
             {
-                using (var stream = response.GetResponseStream())
+                telemetryClient.TrackTrace("Calling " + url);
+                using (var response = WebRequest.CreateHttp(url).GetResponse())
                 {
-                    using (var reader = new StreamReader(stream))
+                    using (var stream = response.GetResponseStream())
                     {
-                        return JsonConvert.DeserializeObject(reader.ReadToEnd().Substring(4));
+                        using (var reader = new StreamReader(stream))
+                        {
+                            return JsonConvert.DeserializeObject(reader.ReadToEnd().Substring(4));
+                        }
                     }
                 }
             }
-        }       
+            catch (Exception ex)
+            {
+                telemetryClient.TrackException(ex);
+                throw;
+            }
+        }
     }
 }
